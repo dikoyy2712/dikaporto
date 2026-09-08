@@ -2,7 +2,7 @@ document.getElementById('cyberGuestbookForm').addEventListener('submit', functio
     e.preventDefault();
 
     // Tempelkan URL Web App Google Apps Script kamu di dalam tanda petik di bawah ini
-    const scriptURL = 'https://script.google.com/macros/s/AKfycbxAt6cjklXRPDmoJhod1KWs01iV55TMy_YPE91cVCtBAa3L_9SzZAa7mS4ZMQ9XkYWB/exec';
+    const scriptURL = 'https://script.google.com/macros/s/AKfycbzqRFSgKfjrS8I_ynFwsO8dIXAYyMl7bVthd0ZE9X7Y30FIu-_25KvYuPH9H6vYVJ8/exec';
 
     const submitBtn = document.getElementById('submitBtn');
     const responseMsg = document.getElementById('responseMessage');
