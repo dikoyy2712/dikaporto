@@ -1,8 +1,8 @@
 document.getElementById('cyberGuestbookForm').addEventListener('submit', function (e) {
     e.preventDefault();
 
-    // MASUKKAN URL WEB APP GOOGLE APPS SCRIPT KAMU DI SINI
-    const scriptURL = 'PASTE_URL_WEB_APP_GAS_KAMU_DI_SINI';
+    // Tempelkan URL Web App Google Apps Script kamu di dalam tanda petik di bawah ini
+    const scriptURL = 'https://script.google.com/macros/s/AKfycbxAt6cjklXRPDmoJhod1KWs01iV55TMy_YPE91cVCtBAa3L_9SzZAa7mS4ZMQ9XkYWB/exec';
 
     const submitBtn = document.getElementById('submitBtn');
     const responseMsg = document.getElementById('responseMessage');
