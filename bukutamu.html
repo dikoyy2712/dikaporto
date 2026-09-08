@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Buku Tamu Digital | Cyber System</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+    <div class="background-glow glow-one"></div>
+    <div class="background-glow glow-two"></div>
+
+    <header class="page-hero">
+        <div class="hero-grid"></div>
+        <div class="page-hero-content">
+            <div class="system-status">
+                <span class="status-dot"></span>
+                GUESTBOOK TRANSMISSION ONLINE
+            </div>
+            <p class="small-title">07 // TERMINAL INPUT</p>
+            <h1>BUKU TAMU <span>DIGITAL</span></h1>
+            <p>Tinggalkan jejak data atau pesan Anda dalam jaringan terminal ini.</p>
+        </div>
+    </header>
+
+    <nav>
+        <div class="nav-logo">
+            <span>&lt;/&gt;</span> MY.PORTFOLIO
+        </div>
+        <div class="nav-menu">
+            <a href="index.html">Profil</a>
+            <a href="minat.html">Minat & Rencana</a>
+            <a href="prestasi.html">Prestasi</a>
+            <a href="keseharian.html">Keseharian</a>
+            <a href="lagu.html">Musik</a>
+            <a href="bukutamu.html" class="active">Buku Tamu</a>
+            <a href="penutup.html">Penutup</a>
+        </div>
+    </nav>
+
+    <main>
+        <section class="content-panel reveal">
+            <div class="panel-label">
+                <span>07</span> DATA ENTRY TERMINAL
+            </div>
+            <h2 class="section-title">Kirim Pesan Tamu</h2>
+            <div class="line-decoration"></div>
+            <p class="section-description">Formulir terhubung langsung dengan Database Cloud Google Sheets secara real-time.</p>
+
+            <form id="cyberGuestbookForm" class="cyber-form">
+                <div class="form-group">
+                    <label for="nama">IDENTITAS NAMA</label>
+                    <input type="text" id="nama" name="nama" placeholder="Masukkan nama Anda..." required>
+                </div>
+
+                <div class="form-group">
+                    <label for="email">ALAMAT EMAIL</label>
+                    <input type="email" id="email" name="email" placeholder="nama@domain.com" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="pesan">TRANSMISI PESAN</label>
+                    <textarea id="pesan" name="pesan" rows="4" placeholder="Tuliskan pesan Anda di sini..." required></textarea>
+                </div>
+
+                <button type="submit" id="submitBtn" class="cyber-button">
+                    <span>TRANSMIT DATA</span>
+                </button>
+            </form>
+
+            <div id="responseMessage" class="status-message"></div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="footer-line"></div>
+        <p class="footer-logo">&lt; SYSTEM ACTIVE /&gt;</p>
+        <p class="footer-status">● DATABASE CONNECTED</p>
+    </footer>
+
+    <script src="script.js"></script>
+    <script src="js/guestbook.js"></script>
+</body>
+</html>
