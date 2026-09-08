@@ -1,8 +1,63 @@
+// MASUKKAN URL WEB APP GOOGLE APPS SCRIPT KAMU DI SINI
+const scriptURL = 'https://script.google.com/macros/s/AKfycbxAD8SjfUgJTm7UKTZLoig_mm91xaLX7e98AHu_FIfDPgoBfGS_iYuEGonBlN3Z2Wxh/exec';
+
+// Fungsi untuk mengambil dan menampilkan pesan dari Google Sheets
+function loadMessages() {
+    const container = document.getElementById('guestbookMessages');
+    if (!container) return;
+    
+    container.innerHTML = '<p class="loading-text">[SYSTEM]: Mengambil data pesan...</p>';
+
+    fetch(scriptURL)
+        .then(response => response.json())
+        .then(data => {
+            container.innerHTML = '';
+            if (data.length === 0) {
+                container.innerHTML = '<p class="empty-text">Belum ada pesan. Jadilah yang pertama!</p>';
+                return;
+            }
+
+            // Tampilkan pesan terbaru di paling atas
+            data.reverse().forEach(item => {
+                const card = document.createElement('div');
+                card.className = 'message-card';
+                
+                // Format tanggal sederhana
+                const date = item.timestamp ? new Date(item.timestamp).toLocaleDateString('id-ID') : '';
+
+                card.innerHTML = `
+                    <div class="message-header">
+                        <span class="sender-name">👤 ${escapeHtml(item.nama)}</span>
+                        <span class="message-date">${date}</span>
+                    </div>
+                    <p class="message-body">${escapeHtml(item.pesan)}</p>
+                `;
+                container.appendChild(card);
+            });
+        })
+        .catch(err => {
+            container.innerHTML = '<p class="error-text">Gagal memuat pesan.</p>';
+            console.error('Error loading messages:', err);
+        });
+}
+
+// Mencegah XSS Injection
+function escapeHtml(text) {
+    if (!text) return '';
+    return text
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+}
+
+// Muat data saat halaman selesai dibuka
+document.addEventListener('DOMContentLoaded', loadMessages);
+
+// Event Submit Form
 document.getElementById('cyberGuestbookForm').addEventListener('submit', function (e) {
     e.preventDefault();
-
-    // Tempelkan URL Web App Google Apps Script kamu di dalam tanda petik di bawah ini
-    const scriptURL = 'https://script.google.com/macros/s/AKfycbzqRFSgKfjrS8I_ynFwsO8dIXAYyMl7bVthd0ZE9X7Y30FIu-_25KvYuPH9H6vYVJ8/exec';
 
     const submitBtn = document.getElementById('submitBtn');
     const responseMsg = document.getElementById('responseMessage');
@@ -32,6 +87,9 @@ document.getElementById('cyberGuestbookForm').addEventListener('submit', functio
         document.getElementById('cyberGuestbookForm').reset();
         submitBtn.disabled = false;
         submitBtn.innerHTML = '<span>TRANSMIT DATA</span>';
+        
+        // Muat ulang daftar pesan secara instan!
+        setTimeout(loadMessages, 1500);
     })
     .catch(error => {
         responseMsg.className = 'status-message error';
