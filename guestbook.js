@@ -1,19 +1,25 @@
-// MASUKKAN URL WEB APP GOOGLE APPS SCRIPT KAMU DI SINI
+// ==========================================================
+// BUKU TAMU DIGITAL - CYBERPUNK TRANSMISSION SYSTEM
+// ==========================================================
+
+// MASUKKAN URL WEB APP GOOGLE APPS SCRIPT KAMU DI SINI (Ganti link di bawah ini)
 const scriptURL = 'https://script.google.com/macros/s/AKfycbxAD8SjfUgJTm7UKTZLoig_mm91xaLX7e98AHu_FIfDPgoBfGS_iYuEGonBlN3Z2Wxh/exec';
 
-// Fungsi untuk mengambil dan menampilkan pesan dari Google Sheets
+// ----------------------------------------------------------
+// 1. FUNGSI UNTUK MEMUAT & MENAMPILKAN PESAN DARI DATABASE
+// ----------------------------------------------------------
 function loadMessages() {
     const container = document.getElementById('guestbookMessages');
     if (!container) return;
     
-    container.innerHTML = '<p class="loading-text">[SYSTEM]: Mengambil data pesan...</p>';
+    container.innerHTML = '<p class="loading-text">[SYSTEM]: MENGHUBUNGKAN KE CLOUD DATABASE...</p>';
 
     fetch(scriptURL)
         .then(response => response.json())
         .then(data => {
             container.innerHTML = '';
-            if (data.length === 0) {
-                container.innerHTML = '<p class="empty-text">Belum ada pesan. Jadilah yang pertama!</p>';
+            if (!data || data.length === 0) {
+                container.innerHTML = '<p class="empty-text">[LOG EMPTY]: Belum ada transmisi pesan. Jadilah yang pertama!</p>';
                 return;
             }
 
@@ -23,12 +29,23 @@ function loadMessages() {
                 card.className = 'message-card';
                 
                 // Format tanggal sederhana
-                const date = item.timestamp ? new Date(item.timestamp).toLocaleDateString('id-ID') : '';
+                let dateFormatted = 'RECENT';
+                if (item.timestamp) {
+                    const d = new Date(item.timestamp);
+                    dateFormatted = d.toLocaleDateString('id-ID', {
+                        day: '2-digit',
+                        month: 'short',
+                        year: 'numeric'
+                    });
+                }
 
                 card.innerHTML = `
                     <div class="message-header">
-                        <span class="sender-name">👤 ${escapeHtml(item.nama)}</span>
-                        <span class="message-date">${date}</span>
+                        <div class="sender-info">
+                            <span class="sender-icon">⚡</span>
+                            <span class="sender-name">${escapeHtml(item.nama)}</span>
+                        </div>
+                        <span class="message-date">${dateFormatted}</span>
                     </div>
                     <p class="message-body">${escapeHtml(item.pesan)}</p>
                 `;
@@ -36,12 +53,14 @@ function loadMessages() {
             });
         })
         .catch(err => {
-            container.innerHTML = '<p class="error-text">Gagal memuat pesan.</p>';
+            container.innerHTML = '<p class="error-text">[ERROR]: Gagal mengambil data transmisi.</p>';
             console.error('Error loading messages:', err);
         });
 }
 
-// Mencegah XSS Injection
+// ----------------------------------------------------------
+// 2. FUNGSI SANITASI HTML (PENCEGAHAN XSS INJECTION)
+// ----------------------------------------------------------
 function escapeHtml(text) {
     if (!text) return '';
     return text
@@ -52,27 +71,34 @@ function escapeHtml(text) {
         .replace(/'/g, "&#039;");
 }
 
-// Muat data saat halaman selesai dibuka
+// ----------------------------------------------------------
+// 3. JALANKAN LOAD MESSAGES SAAT HALAMAN SELESAI DIMUAT
+// ----------------------------------------------------------
 document.addEventListener('DOMContentLoaded', loadMessages);
 
-// Event Submit Form
+// ----------------------------------------------------------
+// 4. HANDLER UNTUK SUBMIT FORMULIR BUKU TAMU
+// ----------------------------------------------------------
 document.getElementById('cyberGuestbookForm').addEventListener('submit', function (e) {
-    e.preventDefault();
+    e.preventDefault(); // Mencegah reload halaman
 
     const submitBtn = document.getElementById('submitBtn');
     const responseMsg = document.getElementById('responseMessage');
 
+    // Ubah tampilan tombol & status saat transmisi
     submitBtn.disabled = true;
     submitBtn.innerHTML = '<span>TRANSMITTING...</span>';
     responseMsg.className = 'status-message processing';
     responseMsg.innerText = '[SYSTEM]: Memproses transmisi data ke cloud database...';
 
+    // Ambil data dari input form
     const formData = {
         nama: document.getElementById('nama').value,
         email: document.getElementById('email').value,
         pesan: document.getElementById('pesan').value
     };
 
+    // Kirim data ke Google Apps Script
     fetch(scriptURL, {
         method: 'POST',
         mode: 'no-cors',
@@ -82,18 +108,23 @@ document.getElementById('cyberGuestbookForm').addEventListener('submit', functio
         body: JSON.stringify(formData)
     })
     .then(() => {
+        // Notifikasi Sukses
         responseMsg.className = 'status-message success';
         responseMsg.innerText = '✔ [SUCCESS]: Data berhasil dicatat dalam Google Spreadsheet!';
+        
+        // Reset formulir & tombol
         document.getElementById('cyberGuestbookForm').reset();
         submitBtn.disabled = false;
         submitBtn.innerHTML = '<span>TRANSMIT DATA</span>';
         
-        // Muat ulang daftar pesan secara instan!
+        // Muat ulang daftar pesan secara instan (jeda 1.5 detik)
         setTimeout(loadMessages, 1500);
     })
     .catch(error => {
+        // Notifikasi Gagal
         responseMsg.className = 'status-message error';
         responseMsg.innerText = '✖ [ERROR]: Transmisi gagal. ' + error.message;
+        
         submitBtn.disabled = false;
         submitBtn.innerHTML = '<span>RETRY TRANSMIT</span>';
     });
